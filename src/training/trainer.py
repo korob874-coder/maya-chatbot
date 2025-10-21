@@ -1,5 +1,3 @@
-# 3. Buat file trainer
-%%writefile /content/maya-chatbot/src/training/trainer.py
 import torch
 import torch.nn as nn
 import time
