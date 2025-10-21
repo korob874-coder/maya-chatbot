@@ -1,5 +1,3 @@
-# 2. Buat file dataset
-%%writefile /content/maya-chatbot/src/data/dataset.py
 import torch
 from torch.utils.data import Dataset
 import re
