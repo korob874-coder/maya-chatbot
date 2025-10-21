@@ -1,0 +1,36 @@
+# configs/indonesian_small.yaml
+name: "maya_indonesian_small"
+language: "id"
+
+model:
+  vocab_size: 10000
+  d_model: 256
+  n_heads: 4
+  n_layers: 3
+  max_length: 128
+  dropout: 0.1
+
+training:
+  batch_size: 16
+  learning_rate: 0.001
+  num_epochs: 10
+  warmup_steps: 500
+  save_dir: "./checkpoints/indonesian"
+  early_stopping_patience: 3
+
+data:
+  topics:
+    - "Kecerdasan buatan"
+    - "Pembelajaran mesin" 
+    - "Python (bahasa pemrograman)"
+    - "Ilmu komputer"
+    - "Data science"
+  min_text_length: 300
+  cache_dir: "./data/raw/wikipedia_id"
+  use_stopwords: true
+
+chatbot:
+  personality: "indonesian_friendly"
+  max_response_length: 100
+  temperature: 0.7
+  top_k: 30
