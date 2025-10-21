@@ -1,16 +1,15 @@
-# src/data/indonesian_data.py
 """Data loader khusus Bahasa Indonesia"""
 import wikipediaapi
 import requests
 import re
-from ..lang.indonesian import INDONESIAN_TOPICS, INDONESIAN_STOPWORDS
 
 class IndonesianDataLoader:
-    def __init__(self, language='id'):
+    def __init__(self, language='id', user_agent="MayaChatbot/1.0"):
         self.language = language
         self.wiki = wikipediaapi.Wikipedia(
             language=language,
-            extract_format=wikipediaapi.ExtractFormat.WIKI
+            extract_format=wikipediaapi.ExtractFormat.WIKI,
+            user_agent=user_agent  # ← TAMBAHKAN INI
         )
     
     def get_wikipedia_text(self, topic, min_length=300):
@@ -18,9 +17,12 @@ class IndonesianDataLoader:
         try:
             page = self.wiki.page(topic)
             if page.exists():
-                return self.clean_indonesian_text(page.text)
+                text = self.clean_indonesian_text(page.text)
+                if len(text) >= min_length:
+                    return text
             return None
-        except:
+        except Exception as e:
+            print(f"Error getting {topic}: {e}")
             return None
     
     def clean_indonesian_text(self, text):
@@ -40,23 +42,30 @@ class IndonesianDataLoader:
     def get_multiple_topics(self, topics=None, min_length=200):
         """Ambil multiple topics"""
         if topics is None:
-            topics = INDONESIAN_TOPICS
+            topics = [
+                "Kecerdasan buatan",
+                "Pembelajaran mesin", 
+                "Python (bahasa pemrograman)",
+                "Ilmu komputer",
+                "Data science"
+            ]
         
         all_text = ""
         successful_topics = []
         
         for topic in topics:
+            print(f"  Downloading: {topic}")
             text = self.get_wikipedia_text(topic, min_length)
-            if text and len(text) >= min_length:
+            if text:
                 all_text += text + "\n\n"
                 successful_topics.append(topic)
-                print(f"✅ {topic}: {len(text)} karakter")
+                print(f"  ✅ {topic}: {len(text)} karakter")
             else:
-                print(f"❌ {topic}: gagal atau terlalu pendek")
+                print(f"  ❌ {topic}: gagal atau terlalu pendek")
             
             # Delay untuk menghormati server
             import time
-            time.sleep(0.5)
+            time.sleep(1)
         
         print(f"\n📚 Berhasil mengumpulkan {len(successful_topics)} topik")
         print(f"📊 Total teks: {len(all_text)} karakter")
